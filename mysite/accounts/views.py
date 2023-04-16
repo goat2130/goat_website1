@@ -1,14 +1,18 @@
+import logging
+import time
+
 from django.contrib.auth import login as auth_login
 from django.http.response import HttpResponseRedirect
 from django.template.response import TemplateResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
+from .forms import LoginForm, RegisterForm, ProfileForm
 
-from .forms import LoginForm
-
+logger = logging.getLogger(__name__)
 
 class LoginView(View):
     def get(self, request, *args, **kwargs):
@@ -53,4 +57,28 @@ class LoginView(View):
 
 login = LoginView.as_view()
 
-# Create your views here.
+class ProfileView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        form = ProfileForm(None, instance=request.user)
+        context = {
+            'form': form,
+        }
+        return render(request, 'accounts/profile.html', context)
+
+    def post(self, request, *args, **kwargs):
+        logger.info("You're in post!!!")
+
+        # フォームを使ってバリデーション
+        form = ProfileForm(request.POST, instance=request.user)
+        if not form.is_valid():
+            return render(request, 'accounts/profile.html', {'form': form})
+
+        # 変更を保存
+        form.save()
+
+        # フラッシュメッセージを画面に表示
+        messages.info(request, "プロフィールを更新しました。")
+        return redirect('/accounts/profile/')
+
+
+profile = ProfileView.as_view()

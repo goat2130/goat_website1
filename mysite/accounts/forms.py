@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 User = get_user_model()
 
@@ -65,3 +66,10 @@ class LoginForm(forms.Form):
         # パスワードの検証
         if not user.check_password(password):
             raise forms.ValidationError("正しいパスワードを入力してください")
+
+class ProfileChangeView(forms.ModelForm):
+    """プロフィール変更画面用のビュー"""
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'profile_image')
