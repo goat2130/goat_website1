@@ -67,9 +67,24 @@ class LoginForm(forms.Form):
         if not user.check_password(password):
             raise forms.ValidationError("正しいパスワードを入力してください")
 
-class ProfileChangeView(forms.ModelForm):
-    """プロフィール変更画面用のビュー"""
-
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('email', 'profile_image')
+        fields = ('username', 'email', 'last_name', 'first_name',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs = {'placeholder': 'ユーザー名'}
+        self.fields['email'].required = True
+        self.fields['email'].widget.attrs = {'placeholder': 'メールアドレス'}
+        # self.fields['password'].widget = forms.PasswordInput(attrs={'placeholder': 'パスワード'}, render_value=True)
+        self.fields['last_name'].widget.attrs = {'placeholder': '苗字'}
+        self.fields['first_name'].widget.attrs = {'placeholder': '名前'}
+
+    def clean_username(self):
+        value = self.cleaned_data['username']
+        return value
+
+    def clean_email(self):
+        value = self.cleaned_data['email']
+        return value
