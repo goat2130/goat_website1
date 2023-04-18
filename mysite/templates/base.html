@@ -1,37 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 {% load static %}
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# -- タイトル -- #}
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'  %}">
-    <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block page_title %}{% endblock %}</title>
+
+    {# --- css --- #}
+    <link rel="stylesheet" href="{% static 'vendor/semantic/semantic.min.css' %}">
+    <style type="text/css">
         body {
-            background-color: #f5f5f5;
+            background-color: #dadada;
+        }
+        body > .container {
+            height: 100%;
         }
     </style>
-    {# -- CSS -- #}
     {% block extra_css %}{% endblock %}
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+    <![endif]-->
 </head>
 <body>
-    {# -- メッセージ -- #}
-    {% block messages %}
-        {% include "_message.html" %}
-    {% endblock %}
+<div class="ui container">
+    {% include '_message.html' %}
+    {% block content %}{% endblock %}
+</div>
 
-    {# -- メインコンテンツ -- #}
-    {% block main %}{% endblock %}
+{# TODO #}
+{% if user.is_authenticated %}
+<a href="{% url 'accounts:logout' %}">ログアウト</a> | <a href="{% url 'accounts:profile' %}">プロフィール</a> | <a href="{% url 'shop:index' %}">ショップ</a>
+{% endif %}
 
-    {# -- フッタ- -- #}
-    {% block footer %}
-        {% include "_footer.html" %}
-    {% endblock %}
-
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-{# -- JavaScript -- #}
-{% block extra_js %}{endblock}
+{# --- js --- #}
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'vendor/semantic/semantic.min.js' %}"></script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>
