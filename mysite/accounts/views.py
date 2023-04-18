@@ -1,12 +1,12 @@
 import logging
+import time
 
 from django.conf import settings
-from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import login as auth_login
 from django.urls import reverse
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
 
 from .forms import LoginForm, RegisterForm, ProfileForm
 

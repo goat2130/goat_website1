@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-dyvj3+ris!ttao#n8bd8syj%%n3sto7o94ipp3(8q$*2e6un!r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -111,9 +111,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ja'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tokyo'
 
 USE_I18N = True
 
@@ -124,8 +124,65 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = f'var/www/{BASE_DIR.name}/static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = f'/var/www/{BASE_DIR.name}/media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    # バージョンは「1」固定
+    'version': 1,
+    # 既存のログ設定を無効化しない
+    'disable_existing_loggers': False,
+    # ログフォーマット
+    'formatters': {
+        # 開発用
+        'develop': {
+            'format': '[{name}] {asctime} [{levelname}] {pathname}:{lineno:d} '
+                      '{message}',
+            'style':  '{',
+            },
+        },
+
+    # ハンドラ
+    'handlers': {
+        # コンソール出力用ハンドラ
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'develop',
+        },
+    },
+    # ロガー
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO'
+    },
+
+    'loggers': {
+        # 自作アプリケーション全般のログを拾うロガー
+        'shop': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        # Django本体が出すログ全般を拾うロガー
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # 発行されるSQL文を出力するための設定
+         'django.db.backends': {
+             'handlers': ['console'],
+             'level': 'DEBUG',
+             'propagate': False,
+         },
+    },
+}
