@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views import View
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import LoginForm, RegisterForm, ProfileForm
 
@@ -107,3 +108,29 @@ class LogoutView(View):
 
 
 logout = LogoutView.as_view()
+
+class ProfileView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        form = ProfileForm(None, instance=request.user)
+        context = {
+            'form': form,
+        }
+        return render(request, 'accounts/profile.html', context)
+
+    def post(self, request, *args, **kwargs):
+        logger.info("You're in post!!!")
+
+        # フォームを使ってバリデーション
+        form = ProfileForm(request.POST, instance=request.user)
+        if not form.is_valid():
+            return render(request, 'accounts/profile.html', {'form': form})
+
+        # 変更を保存
+        form.save()
+
+        # フラッシュメッセージを画面に表示
+        messages.info(request, "プロフィールを更新しました。")
+        return redirect('/accounts/profile/')
+
+
+profile = ProfileView.as_view()
